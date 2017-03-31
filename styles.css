@@ -1,0 +1,58 @@
+body {
+  background-color: #CAD1D7;
+  font-family: 'Inconsolata', monospace;
+  color: #444;
+  text-align: center;
+}
+
+*:focus {
+  outline: none;
+}
+
+h1 {
+  font-size: 44px;
+}
+
+.wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+span {
+  height: 10px;
+  width: 10px;
+  background-color: #fff;
+  display: inline-block;
+}
+
+#generations {
+  background-color: #CAD1D7;
+}
+
+.alive {
+  background-color: red;
+}
+
+.grid {
+  margin-top: 20px;
+}
+
+.grid, br {
+  margin: 0;
+  font-size: 0;
+}
+
+button {
+  height: 32px;
+  width: 100px;
+  font-size: 14px;
+  text-transform: uppercase;
+  background-color: white;
+  border: none;
+  margin: 30px 7px;
+}
+
+button:hover {
+  background-color: red;
+  color: white;
+}
