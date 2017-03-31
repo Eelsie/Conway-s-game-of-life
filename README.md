@@ -1,3 +1,3 @@
-# Conway-s-game-of-life
+# Conway's game of life
 
 Vanilla Javascript Conway's game of life
