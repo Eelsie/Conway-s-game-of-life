@@ -1,6 +1,6 @@
 'use strict'
 
-// create a two dimensional array of 0 (dead)
+// create a two dimensional gridArray of 0 (dead)
 
 var gridArr = [];
 
@@ -17,10 +17,10 @@ function createArr(rows, columns) {
 
 // populate randomly the grid (1 is alive, 0 is dead)
 
-function populateGrid(arr) {
-  for(var y = 0, colLen = arr.length; y < colLen; y++) {
-    for(var i = 0, rowLen = arr[0].length; i < rowLen; i++) {
-        arr[y][i] = Math.round(Math.random() < 0.1);
+function populateGrid(gridArr) {
+  for(var y = 0, colLen = gridArr.length; y < colLen; y++) {
+    for(var i = 0, rowLen = gridArr[0].length; i < rowLen; i++) {
+        gridArr[y][i] = Math.round(Math.random() < 0.1);
     }
   }
 }
@@ -28,17 +28,20 @@ function populateGrid(arr) {
 
 // append the grid to the DOM (using fragment to bypass recalculating, painting and layout for every element, as explained here: https://coderwall.com/p/o9ws2g/why-you-should-always-append-dom-elements-using-documentfragments)
 
-function createGrid(arr) {
+function createGrid(gridArr) {
 
   var el;
   var br;
   var fragment = document.createDocumentFragment();
 
-  for(var y = 0, colLen = arr.length; y < colLen; y++) {
-    for(var i = 0, rowLen = arr[0].length; i < rowLen; i++) {
+  for(var y = 0, colLen = gridArr.length; y < colLen; y++) {
+    for(var i = 0, rowLen = gridArr[0].length; i < rowLen; i++) {
         el = document.createElement('span');
-        if (arr[y][i] === 1) {
+        if (gridArr[y][i] === 1) {
           el.className = 'alive';
+        }
+        if (el.className === 'alive') {
+          gridArr[y][i] = 1;
         }
         fragment.appendChild(el);
     }
@@ -51,16 +54,16 @@ function createGrid(arr) {
 
 // calculate next step
 
-function updateArray(arr) {
-  for(var y = 1, colLen = arr.length - 1; y < colLen; y++) {
-    for(var i = 1, rowLen = arr[0].length - 1; i < rowLen; i++) {
-      var sum = arr[y-1][i-1] + arr[y-1][i] + arr[y-1][i+1] + arr[y][i-1] + arr[y][i+1] + arr[y+1][i-1] + arr[y+1][i] + arr[y+1][i+1];
+function updateArray(gridArr) {
+  for(var y = 1, colLen = gridArr.length - 1; y < colLen; y++) {
+    for(var i = 1, rowLen = gridArr[0].length - 1; i < rowLen; i++) {
+      var sum = gridArr[y-1][i-1] + gridArr[y-1][i] + gridArr[y-1][i+1] + gridArr[y][i-1] + gridArr[y][i+1] + gridArr[y+1][i-1] + gridArr[y+1][i] + gridArr[y+1][i+1];
       if(sum < 2) {
-        arr[y][i] = 0;
+        gridArr[y][i] = 0;
       } else if(sum === 3) {
-        arr[y][i] = 1;
+        gridArr[y][i] = 1;
       } else if(sum > 3) {
-        arr[y][i] = 0;
+        gridArr[y][i] = 0;
       }
     }
   }
@@ -71,15 +74,16 @@ function updateArray(arr) {
 
 var life;
 
-function animateGrid(arr) {
+function animateGrid(gridArr) {
+  console.log(gridArr);
   var generations = 0;
   life = setInterval(function(){
-    updateArray(arr);
+    updateArray(gridArr);
     var grid = document.querySelector('.grid');
     while (grid.hasChildNodes()) {
       grid.removeChild(grid.lastChild);
     }
-    createGrid(arr);
+    createGrid(gridArr);
     generations = generations + 1;
     document.getElementById('generations').innerText = generations;
   }, 200);
@@ -88,12 +92,12 @@ function animateGrid(arr) {
 
 // Reset the grid
 
-function resetArr(arr) {
+function resetArr(gridArr) {
   clearInterval(life);
   document.getElementById('generations').innerText = 0;
-  for(var y = 0, colLen = arr.length; y < colLen; y++) {
-    for(var i = 0, rowLen = arr[0].length; i < rowLen; i++) {
-        arr[y][i] = 0;
+  for(var y = 0, colLen = gridArr.length; y < colLen; y++) {
+    for(var i = 0, rowLen = gridArr[0].length; i < rowLen; i++) {
+        gridArr[y][i] = 0;
     }
   }
   var grid = document.querySelector('.grid');
@@ -104,10 +108,10 @@ function resetArr(arr) {
 
 // randomize again the grid
 
-function randomizeGrid(arr) {
-  resetArr(arr);
-  populateGrid(arr);
-  createGrid(arr);
+function randomizeGrid(gridArr) {
+  resetArr(gridArr);
+  populateGrid(gridArr);
+  createGrid(gridArr);
 }
 
 // start game
@@ -119,14 +123,27 @@ function startGame(rows, columns) {
   animateGrid(gridArr);
 }
 
-startGame(50,70);
-
-
-
 
 // buttons events
 
-document.getElementById('run').addEventListener("click", function() {  clearInterval(life); animateGrid(gridArr)}, false);
+document.getElementById('run').addEventListener("click", function() {clearInterval(life); animateGrid(gridArr)}, false);
 document.getElementById('stop').addEventListener("click", function() {clearInterval(life)}, false);
 document.getElementById('reset').addEventListener("click", function() {resetArr(gridArr); createGrid(gridArr);}, false);
 document.getElementById('randomize').addEventListener("click", function() {randomizeGrid(gridArr)}, false);
+
+
+// populate on click
+
+// using event delegation, as here http://jsfiddle.net/ArNJA/
+
+window.onload = startGame(50,70);
+
+window.onload = function() {
+  document.querySelector('.grid').onclick = function(e){
+    var e = e || window.event;
+    var target = e.target || e.srcElement;
+    if(target.tagName.toLowerCase() ==  "span") {
+        target.className = 'alive';
+    }
+  };
+};
