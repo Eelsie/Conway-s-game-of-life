@@ -11,6 +11,7 @@ function createArr(rows, columns) {
       gridArr[y][x] = 0;
     }
   }
+  return gridArr;
 }
 
 
@@ -19,7 +20,7 @@ function createArr(rows, columns) {
 function populateGrid(arr) {
   for(var y = 0, colLen = arr.length; y < colLen; y++) {
     for(var i = 0, rowLen = arr[0].length; i < rowLen; i++) {
-        arr[y][i] = Math.round(Math.random() < 0.2);
+        arr[y][i] = Math.round(Math.random() < 0.1);
     }
   }
 }
@@ -109,12 +110,18 @@ function randomizeGrid(arr) {
   createGrid(arr);
 }
 
+// start game
 
-createArr(40,60);
+function startGame(rows, columns) {
+  createArr(rows, columns);
+  populateGrid(gridArr);
+  createGrid(gridArr);
+  animateGrid(gridArr);
+}
 
-populateGrid(gridArr);
+startGame(50,70);
 
-createGrid(gridArr);
+
 
 
 // buttons events
